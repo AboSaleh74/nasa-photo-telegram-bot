@@ -1,0 +1,23 @@
+version: '3'
+services: 
+  postgres:
+    image: postgres:latest
+    container_name: postgres_container
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - airflow_network
+
+networks:
+  airflow_network:
+    driver: bridge
+    external: false
+
+volumes:
+  postgres_data:
