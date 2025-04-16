@@ -1,5 +1,6 @@
 version: '3'
-services: 
+
+services:
   postgres:
     image: postgres:latest
     container_name: postgres_container
@@ -14,10 +15,38 @@ services:
     networks:
       - airflow_network
 
+  webserver:
+    image: apache/airflow:latest
+    container_name: airflow_webserver
+    environment:
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://postgres:postgres@postgres/postgres
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    ports:
+      - "8080:8080"
+    networks:
+      - airflow_network
+
+  scheduler:
+    image: apache/airflow:latest
+    container_name: airflow_scheduler
+    environment:
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://postgres:postgres@postgres/postgres
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    networks:
+      - airflow_network
+
+  worker:
+    image: apache/airflow:latest
+    container_name: airflow_worker
+    environment:
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://postgres:postgres@postgres/postgres
+      AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+    networks:
+      - airflow_network
+
 networks:
   airflow_network:
     driver: bridge
-    external: false
 
 volumes:
   postgres_data:
